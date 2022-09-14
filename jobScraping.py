@@ -18,17 +18,18 @@ def find_jobs():
     html_text = requests.get('https://www.timesjobs.com/candidate/job-search.html?searchType=personalizedSearch&from=submit&txtKeywords=Python&txtLocation=').text
     soup = BeautifulSoup(html_text, 'lxml') # lxml : parser
     jobs = soup.find_all('li', class_='clearfix job-bx wht-shd-bx')
-    for job in jobs:
+    for index, job in enumerate(jobs):
         published_date = job.find('span', class_='sim-posted').text
         if 'few' in published_date:
             company_name = job.find('h3', class_='joblist-comp-name').text.replace(' ', '')
             skills = job.find('span', class_='srp-skills').text.lower().replace(' ', '')
             more_info = job.header.h2.a['href']
             if unfamiliar_skills not in skills:
-                print(f"Company name: {company_name.strip()}")
-                print(f"Required skills: {skills.strip()}")
-                print(f"More info: {more_info}")
-                print('')
+                with open(f'posts/{index}.text', 'w') as f:
+                    f.write(f"Company name: {company_name.strip()} \n")
+                    f.write(f"Required skills: {skills.strip()} \n")
+                    f.write(f"More info: {more_info}")
+                print(f'File saved: {index}.txt')
 
 # run program every 10 minutes
 if __name__ == '__main__':
